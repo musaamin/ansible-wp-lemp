@@ -1,0 +1,12 @@
+- hosts: db
+  become: true
+  roles:
+    - mariadb
+
+- hosts: web
+  become: true
+  roles:
+    - php
+    - nginx
+    - certbot
+    - wordpress

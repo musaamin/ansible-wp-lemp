@@ -1,0 +1,10 @@
+- name: Install Certbot
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+    update_cache: yes
+
+- name: Install SSL cert
+  command: certbot --non-interactive -m {{ email }} --agree-tos --no-eff-email --nginx -d {{ domain }} --redirect
