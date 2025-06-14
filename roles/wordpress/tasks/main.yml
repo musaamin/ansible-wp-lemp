@@ -11,12 +11,18 @@
 
 - name: Download WordPress
   command: wp core download --path=/var/www/{{ domain }} --allow-root
+  args:
+    creates: /var/www/{{ domain }}/wp-config.php  
 
 - name: Buat wp-config.php
   command: wp config create --dbname='{{ mysql_db }}' --dbuser='{{ mysql_user }}' --dbpass='{{ mysql_password }}' --dbhost='{{ ip_dbsrv }}' --path=/var/www/{{ domain }} --allow-root
+  args:
+    creates: /var/www/{{ domain }}/wp-config.php  
 
 - name: Install WordPress
   command: wp core install --url='https://{{ domain }}' --title='{{ wp_title }}' --admin_user='{{ wp_user }}' --admin_password='{{ wp_password }}' --admin_email='{{ email }}' --path=/var/www/{{ domain }} --allow-root
+  args:
+    creates: /var/www/{{ domain }}/wp-config.php  
 
 - name: Ubah user-group direktori
   command: chown -R www-data:www-data /var/www/{{ domain }}
