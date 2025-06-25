@@ -1,0 +1,21 @@
+- name: Install Certbot
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+    update_cache: yes
+  tags: [certbot, install]
+
+- name: Install SSL cert
+  command: >
+    certbot --non-interactive
+            -m {{ email }}
+            --agree-tos
+            --no-eff-email
+            --nginx
+            -d {{ domain }}
+            --redirect
+  args:
+    creates: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+  tags: [certbot, ssl]

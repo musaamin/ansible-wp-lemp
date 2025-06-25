@@ -1,0 +1,65 @@
+- name: Download WP-CLI
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wp
+    mode: '0755'
+  tags: [wordpress, wpcli]
+
+- name: Buat direktori
+  file:
+    path: /var/www/{{ domain }}
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  tags: [wordpress, setup_wp]
+
+- name: Download WordPress
+  command: > 
+    wp core download 
+    --path=/var/www/{{ domain }} 
+    --allow-root
+  args:
+    creates: /var/www/{{ domain }}/wp-config.php
+  tags: [wordpress, setup_wp]  
+
+- name: Buat wp-config.php
+  command: > 
+    wp config create 
+    --dbname='{{ mysql_db }}' 
+    --dbuser='{{ mysql_user }}' 
+    --dbpass='{{ mysql_password }}' 
+    --dbhost='{{ ip_dbsrv }}' 
+    --path=/var/www/{{ domain }} 
+    --allow-root
+  args:
+    creates: /var/www/{{ domain }}/wp-config.php
+  tags: [wordpress, setup_wp]
+
+- name: Cek apakah WordPress sudah terpasang
+  command: wp core is-installed --path=/var/www/{{ domain }} --allow-root
+  register: wp_installed
+  failed_when: false
+  changed_when: false   
+
+- name: Install WordPress
+  command: > 
+    wp core install 
+    --url='https://{{ domain }}' 
+    --title='{{ wp_title }}' 
+    --admin_user='{{ wp_user }}' 
+    --admin_password='{{ wp_password }}' 
+    --admin_email='{{ email }}' 
+    --path=/var/www/{{ domain }} 
+    --allow-root
+  when: wp_installed.rc != 0
+  tags: [wordpress, setup_wp]  
+
+- name: Ubah user-group direktori
+  file:
+    path: /var/www/{{ domain }}
+    state: directory
+    recurse: true
+    owner: www-data
+    group: www-data
+  tags: [wordpress, permissions]

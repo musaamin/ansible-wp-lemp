@@ -1,0 +1,31 @@
+- name: Pasang Ondrej PHP PPA
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+    update_cache: yes
+  tags: [php, repository]
+
+- name: Install PHP 
+  apt:
+    name: "{{ php_packages }}"
+    state: present
+  vars:
+    php_packages:
+      - php{{ php_ver }}
+      - php{{ php_ver }}-fpm
+      - php{{ php_ver }}-cli
+      - php{{ php_ver }}-common
+      - php{{ php_ver }}-apcu
+      - php{{ php_ver }}-mbstring
+      - php{{ php_ver }}-gd
+      - php{{ php_ver }}-intl
+      - php{{ php_ver }}-xml
+      - php{{ php_ver }}-soap
+      - php{{ php_ver }}-bcmath
+      - php{{ php_ver }}-mysql
+      - php{{ php_ver }}-zip
+      - php{{ php_ver }}-curl
+      - php{{ php_ver }}-tidy
+      - php{{ php_ver }}-imagick
+      - php-pear
+  tags: [php, install]

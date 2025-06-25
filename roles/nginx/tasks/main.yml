@@ -1,0 +1,21 @@
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+  tags: [nginx, install]
+
+- name: Copy nginx vhost config
+  template:
+    src: vhost.conf.j2
+    dest: /etc/nginx/sites-available/{{ domain }}.conf
+  tags: [nginx, config]
+
+- name: Enable site
+  file:
+    src: /etc/nginx/sites-available/{{ domain }}.conf
+    dest: /etc/nginx/sites-enabled/{{ domain }}.conf
+    state: link
+    force: true
+  notify: restart_nginx
+  tags: [nginx, config]
