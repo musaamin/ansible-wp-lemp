@@ -7,6 +7,18 @@
     update_cache: yes
   tags: [certbot, install]
 
+- name: Tambahkan cron job untuk certbot renew
+  cron:
+    name: "Perbarui sertifikat SSL dengan certbot"
+    minute: "0"
+    hour: "0"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "cd /usr/bin && ./certbot renew"
+    user: root
+  tags: [certbot, cron]  
+
 - name: Install SSL cert
   command: >
     certbot --non-interactive
