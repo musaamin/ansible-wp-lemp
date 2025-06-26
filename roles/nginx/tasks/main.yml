@@ -20,11 +20,19 @@
   when: not vhost_stat.stat.exists
   tags: [nginx, config]
 
-- name: Aktifkan site dengan membuat symlink
+- name: Cek apakah symlink sudah benar
+  ansible.builtin.stat:
+    path: /etc/nginx/sites-enabled/{{ domain }}.conf
+    follow: false
+  register: vhost_symlink_stat
+
+- name: Aktifkan virtual host dengan membuat symlink jika belum ada atau salah
   ansible.builtin.file:
     src: /etc/nginx/sites-available/{{ domain }}.conf
     dest: /etc/nginx/sites-enabled/{{ domain }}.conf
     state: link
     force: true
+  when: vhost_symlink_stat.stat.islnk is not defined or
+        vhost_symlink_stat.stat.lnk_source != "/etc/nginx/sites-available/{{ domain }}.conf"
   notify: restart_nginx
   tags: [nginx, config]
