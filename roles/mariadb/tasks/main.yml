@@ -1,12 +1,14 @@
 - name: Install MariaDB Server
-  apt: 
-    name: ['mariadb-server', 'python3-mysqldb']
+  ansible.builtin.apt: 
+    name:
+      - mariadb-server
+      - python3-mysqldb
     state: present
     update_cache: yes
   tags: [mariadb, install]
 
 - name: Aktifkan MariaDB
-  service:
+  ansible.builtin.service:
     name: mariadb
     state: started
     enabled: true
@@ -15,19 +17,19 @@
 - name: Set bind-address untuk remote access
   ansible.builtin.replace:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf
-    regexp: '^bind-address\s*=\s*.*$'
+    regexp: '^bind-address\s*=.*$'
     replace: 'bind-address = {{ ip_dbsrv }}'
   notify: restart_mariadb
   tags: [mariadb, config]
 
 - name: Membuat Database
-  mysql_db:
+  community.mysql.mysql_db:
     name: '{{ mysql_db }}'
     state: present
   tags: [mariadb, db]
 
 - name: Membuat User
-  mysql_user:
+  community.mysql.mysql_user:
     name: '{{ mysql_user }}'
     password: '{{ mysql_password }}'
     priv: '{{ mysql_db }}.*:ALL'
