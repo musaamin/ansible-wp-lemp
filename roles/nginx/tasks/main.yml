@@ -1,18 +1,18 @@
 - name: Install nginx
-  apt:
+  ansible.builtin.apt:
     name: nginx
     state: present
     update_cache: yes
   tags: [nginx, install]
 
-- name: Copy nginx vhost config
-  template:
+- name: Salin konfigurasi virtual host nginx
+  ansible.builtin.template:
     src: vhost.conf.j2
     dest: /etc/nginx/sites-available/{{ domain }}.conf
   tags: [nginx, config]
 
-- name: Enable site
-  file:
+- name: Aktifkan site dengan membuat symlink
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/{{ domain }}.conf
     dest: /etc/nginx/sites-enabled/{{ domain }}.conf
     state: link
