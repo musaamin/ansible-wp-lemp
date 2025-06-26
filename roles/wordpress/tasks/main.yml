@@ -20,7 +20,7 @@
     --path=/var/www/{{ domain }} 
     --allow-root
   args:
-    creates: /var/www/{{ domain }}/wp-config.php
+    creates: /var/www/{{ domain }}/wp-includes
   tags: [wordpress, setup_wp]  
 
 - name: Buat wp-config.php
