@@ -1,14 +1,15 @@
-# ansible_user:'user'
-# ansible_ssh_private_key_file:'/home/user/.ssh/namakey'
-# ansible_python_interpreter:'/usr/bin/python3'
-# ip_websrv:'10.126.0.3'
-# ip_dbsrv:'10.126.0.2'
-# mysql_db:'dbname_wp'
-# mysql_user:'dbuser_wp'
-# mysql_password:'dbpassword_wp'
-# php_ver:'8.3'
-# domain:'contoh.com'
-# email:'admin@contoh.com'
-# wp_title:'Judul Website'
-# wp_user:'wpadmin_user'
-# wp_password:'wpadmin_password'
+# ansible_user: user
+# ansible_ssh_private_key_file: /home/user/.ssh/namakey
+# ansible_python_interpreter: /usr/bin/python3
+
+# ip_websrv: 10.126.0.3
+# ip_dbsrv: 10.126.0.2
+# mysql_db: dbname_wp
+# mysql_user: dbuser_wp
+# mysql_password: dbpassword_wp
+# php_ver: "8.3"
+# domain: contoh.com
+# email: admin@contoh.com
+# wp_title: "Judul Website"
+# wp_user: wpadmin_user
+# wp_password: wpadmin_password
