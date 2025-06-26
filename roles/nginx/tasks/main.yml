@@ -5,13 +5,19 @@
     update_cache: yes
   tags: [nginx, install]
 
-- name: Salin konfigurasi virtual host nginx
+- name: Cek apakah file virtual host sudah ada
+  ansible.builtin.stat:
+    path: /etc/nginx/sites-available/{{ domain }}.conf
+  register: vhost_stat  
+
+- name: Salin konfigurasi virtual host nginx (jika belum ada)
   ansible.builtin.template:
     src: vhost.conf.j2
     dest: /etc/nginx/sites-available/{{ domain }}.conf
     owner: root
     group: root
     mode: '0644'
+  when: not vhost_stat.stat.exists
   tags: [nginx, config]
 
 - name: Aktifkan site dengan membuat symlink
