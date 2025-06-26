@@ -1,12 +1,14 @@
-- hosts: db
+- name: Setup Database Server (MariaDB)
+  hosts: db
   become: true
   roles:
-    - mariadb
+    - role: mariadb
 
-- hosts: web
+- name: Setup Web Server (PHP, Nginx, SSL, WordPress)
+  hosts: web
   become: true
   roles:
-    - php
-    - nginx
-    - certbot
-    - wordpress
+    - role: php
+    - role: nginx
+    - role: certbot
+    - role: wordpress
