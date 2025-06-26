@@ -1,3 +1,8 @@
+- name: Set path konfigurasi dan symlink virtual host
+  ansible.builtin.set_fact:
+    vhost_src_path: "/etc/nginx/sites-available/{{ domain }}.conf"
+    vhost_symlink_path: "/etc/nginx/sites-enabled/{{ domain }}.conf"
+
 - name: Install nginx
   ansible.builtin.apt:
     name: nginx
@@ -7,13 +12,13 @@
 
 - name: Cek apakah file virtual host sudah ada
   ansible.builtin.stat:
-    path: /etc/nginx/sites-available/{{ domain }}.conf
+    path: "{{ vhost_src_path }}"
   register: vhost_stat  
 
 - name: Salin konfigurasi virtual host nginx (jika belum ada)
   ansible.builtin.template:
     src: vhost.conf.j2
-    dest: /etc/nginx/sites-available/{{ domain }}.conf
+    dest: "{{ vhost_src_path }}"
     owner: root
     group: root
     mode: '0644'
@@ -22,17 +27,17 @@
 
 - name: Cek apakah symlink sudah benar
   ansible.builtin.stat:
-    path: /etc/nginx/sites-enabled/{{ domain }}.conf
+    path: "{{ vhost_symlink_path }}"
     follow: false
   register: vhost_symlink_stat
 
-- name: Aktifkan virtual host dengan membuat symlink jika belum ada atau salah
+- name: Aktifkan virtual host dengan membuat symlink jika belum ada atau salah arah
   ansible.builtin.file:
-    src: /etc/nginx/sites-available/{{ domain }}.conf
-    dest: /etc/nginx/sites-enabled/{{ domain }}.conf
+    src: "{{ vhost_src_path }}"
+    dest: "{{ vhost_symlink_path }}"
     state: link
     force: true
   when: vhost_symlink_stat.stat.islnk is not defined or
-        vhost_symlink_stat.stat.lnk_source != "/etc/nginx/sites-available/{{ domain }}.conf"
+        vhost_symlink_stat.stat.lnk_source != vhost_src_path
   notify: restart_nginx
   tags: [nginx, config]
