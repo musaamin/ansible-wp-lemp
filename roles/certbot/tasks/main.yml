@@ -1,5 +1,5 @@
 - name: Install Certbot
-  apt:
+  ansible.builtin.apt:
     name:
       - certbot
       - python3-certbot-nginx
@@ -8,7 +8,7 @@
   tags: [certbot, install]
 
 - name: Tambahkan cron job untuk certbot renew
-  cron:
+  ansible.builtin.cron:
     name: "Perbarui sertifikat SSL dengan certbot"
     minute: "0"
     hour: "0"
@@ -17,10 +17,16 @@
     weekday: "*"
     job: "cd /usr/bin && ./certbot renew"
     user: root
-  tags: [certbot, cron]  
+  tags: [certbot, cron]
+
+- name: Cek apakah sertifikat SSL sudah ada
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+  register: certbot_cert
+  tags: [certbot, ssl]    
 
 - name: Install SSL cert
-  command: >
+  ansible.builtin.command: >
     certbot --non-interactive
             -m {{ email }}
             --agree-tos
@@ -30,4 +36,5 @@
             --redirect
   args:
     creates: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+  when: not certbot_cert.stat.exists
   tags: [certbot, ssl]
