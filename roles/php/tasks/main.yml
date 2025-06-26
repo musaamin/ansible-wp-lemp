@@ -1,12 +1,12 @@
-- name: Pasang Ondrej PHP PPA
-  apt_repository:
+- name: Tambahkan repository PHP Ondrej (PPA)
+  ansible.builtin.apt_repository:
     repo: ppa:ondrej/php
     state: present
     update_cache: yes
   tags: [php, repository]
 
-- name: Install PHP 
-  apt:
+- name: Install PHP dan ekstensi yang diperlukan
+  ansible.builtin.apt:
     name: "{{ php_packages }}"
     state: present
   vars:
